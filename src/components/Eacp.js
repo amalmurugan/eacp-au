@@ -1,10 +1,11 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
-import DataFeed from '../DataFeed/DataFeed.json';
+import React, { useState } from 'react';
+// import axios from 'axios';
+import dataFeed from '../dataFeed/dataFeed.json';
+import './Eacp.css';
 
 function Eacp() {
-  const didMount = useDidMount();
+  // const didMount = <useDidMount/>;
   // const [data, setData] = useState([]);
   // if (didMount) {
   //   axios.get(`https://eacp.energyaustralia.com.au/codingtest/api/v1/festivals`)
@@ -13,8 +14,7 @@ function Eacp() {
   //   })
   // }
   //DataFeed data being used as was facing cors issue with the api
-  let data = DataFeed;
-
+  let data = dataFeed;
 
   function displayBands(bandName, recordLabel, i, festivals, output) {
     output.push({ 'recordLabel': recordLabel, 'bandName': bandName, 'festivals': festivals })
@@ -26,20 +26,18 @@ function Eacp() {
 
   let output = []
   data.map((data, index) => ((displayData(data.name, data.bands, index, output))))
-
-
   output.forEach((value, index) => {
-    if (value.recordLabel == '' || value.recordLabel == undefined) {
+    if (value.recordLabel === '' || value.recordLabel === undefined) {
       delete output[index];
     }
   });
-  
+
   output.sort((a, b) => a.recordLabel.localeCompare(b.recordLabel));
   let tempRecordLabel = ''
   let result = []
   let bands = []
   output.forEach((element, index) => {
-    if ((tempRecordLabel != element.recordLabel) && index > 0) {
+    if ((tempRecordLabel !== element.recordLabel) && index > 0) {
       result.push({ 'recordLabel': element.recordLabel, 'bands': bands })
       bands = []
     }
@@ -49,29 +47,21 @@ function Eacp() {
 
   const displayResponse = (recordLabel, bands, index) => (
     <React.Fragment key={index} >
-      <div>{recordLabel}</div>
-      <div>
-        {bands.map((bands, i) => ((displayOutput(bands.bandName, bands.festivals, i))))}
+      <div className="content">
+        <div className='record'>{recordLabel}</div>
+        <div>
+          {bands.map((bands, i) => ((displayOutput(bands.bandName, bands.festivals, i))))}
+        </div>
       </div>
     </React.Fragment >
   );
 
   const displayOutput = (bandName, festivals, i) => (
     <React.Fragment key={i}>
-      <div className='ml40'>{bandName}</div>
-      <div className='ml80'>{festivals}</div>
+      <div className='band'>{bandName}</div>
+      <div className='festival'>{festivals}</div>
     </React.Fragment>
   );
   return (result.map((result, index) => ((displayResponse(result.recordLabel, result.bands, index)))))
-
 }
-
-function useDidMount() {
-  const didMountRef = useRef(true);
-  useEffect(() => {
-    didMountRef.current = false;
-  }, []);
-  return didMountRef.current;
-};
-
 export default Eacp;
